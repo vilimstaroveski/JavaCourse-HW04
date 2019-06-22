@@ -1,0 +1,6 @@
+Testsuite: hr.fer.zemris.java.tecaj.hw4.collections.TableEntryTests
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 sec
+
+Testcase: testTableEntryExcep took 0 sec
+Testcase: testGettersAndSetters took 0 sec
+Testcase: testTableEntry took 0 sec

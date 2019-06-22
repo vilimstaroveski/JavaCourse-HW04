@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeometrijskiLik.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.grafika</a> &gt; <span class="el_source">GeometrijskiLik.java</span></div><h1>GeometrijskiLik.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.grafika;
+
+import hr.fer.zemris.java.tecaj_3.prikaz.Slika;
+
+/**
+ * Razred predstavlja geometrijski lik.
+ * 
+ * @author Vilim Staroveški
+ *
+ */
+<span class="nc" id="L11">public abstract class GeometrijskiLik {</span>
+	
+	/**
+	 * Vrača {@code true} ako {@link GeometrijskiLik} sadrzi točku sa koordinatama x i y. 
+	 *  
+	 * @param x - {@code int} vrijednost koja predstavlja x koordinatu točke koju ispitujemo.
+	 * @param y - {@code int} vrijednost koja predstavlja y koordinatu točke koju ispitujemo.
+	 * @return {@code true} ako {@link GeometrijskiLik} sadrzi točku sa koordinatama x i y. Inače {@code false}.
+	 */
+	public abstract boolean sadrziTocku(int x, int y);
+	
+	/**
+	 * Metoda koja crta {@link GeometrijskiLik} na predani argument {@link Slika}. Iscrtava se pomoću paljenja pixela koji se nalaze unutar lika.
+	 * Ako je lik prevelik da se iscrta na predanoj slici, iscrtati će se samo dio lika koji je vidljiv na slici.
+	 *  
+	 * @param slika - {@link Slika} na koju će {@link GeometrijskiLik} biti nacrtan.
+	 */
+	public abstract void popuniLik(Slika slika);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Potrepštine.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.grafika</a> &gt; <span class="el_source">Potrepštine.java</span></div><h1>Potrepštine.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.grafika;
+
+import hr.fer.zemris.java.tecaj_3.prikaz.Slika;
+
+
+/**
+ * Razred koji služi za poslove odvajanja argumenata u nekom stringu i metodu za provjeru je li točka dio slike na koju se crta. 
+ * 
+ * @author Vilim Staroveški
+ * @version 1.0
+ */
+<span class="nc" id="L12">public class Potrepštine {</span>
+	
+	/**
+	 * Metoda koja analizira predani {@code String} i iz njega izvlači podatke koji predstavljaju brojeve.
+	 * 
+	 * @param parametriZaAnalizu - {@code String} iz kojeg se izvlače brojevi.
+	 * @param brojArgumenata - broj argumenata koji se očekuje da dobijemo iz predanog {@code String}-a.
+	 * @return {@code int[]} kao polje brojeva koji su bili zapisani u predanom {@code String}-u.
+	 */
+	public static int[] izdvojiArgumente(String parametriZaAnalizu, int brojArgumenata) {
+		
+<span class="nc" id="L23">		int[] argumenti = new int[brojArgumenata];</span>
+		
+<span class="nc" id="L25">		String parametri = parametriZaAnalizu.trim();</span>
+		
+<span class="nc bnc" id="L27" title="All 2 branches missed.">		for(int i = 0; i &lt; brojArgumenata; i++) {</span>
+			
+<span class="nc" id="L29">			String subString = null;</span>
+			
+<span class="nc bnc" id="L31" title="All 2 branches missed.">			if (parametri.contains(&quot; &quot;)) {</span>
+				
+<span class="nc" id="L33">				subString = parametri.substring(0, parametri.indexOf(' ')).trim();</span>
+<span class="nc" id="L34">				parametri = parametri.substring(parametri.indexOf(&quot; &quot;)).trim();</span>
+			}
+			else {
+				
+<span class="nc" id="L38">				subString = parametri;</span>
+			}
+			try {
+				
+<span class="nc" id="L42">				argumenti[i] = Integer.parseInt(subString);</span>
+			
+<span class="nc" id="L44">			} catch(NumberFormatException e) {</span>
+				
+<span class="nc" id="L46">				System.err.println(&quot;Zapis za stvaranje lika nije valjan! Na mjestu gdje je trebao biti broj zatečen je znak '&quot;+subString+&quot;'&quot;);</span>
+<span class="nc" id="L47">				System.exit(1);</span>
+<span class="nc" id="L48">			}</span>
+		}
+<span class="nc" id="L50">		return argumenti;</span>
+	}
+	
+	/**
+	 * Metoda koja provjerava je li tocka sa koordinatama x i y unutar slike predane kao argument.
+	 * 
+	 * @param slika {@code Slika} za koju provjeravamo istinitost.
+	 * @param x x koordinata točke koju provjeravamo.
+	 * @param y y koordinata točke koju provjeravamo.
+	 * @return true ako je točka zbilja dio slike, false inače.
+	 */
+	public static boolean tockaJeNaSlici(Slika slika, int x, int y) {
+		
+<span class="nc bnc" id="L63" title="All 8 branches missed.">		return (x &lt; slika.getSirina()) &amp;&amp; (y &lt; slika.getVisina()) &amp;&amp; (x &gt;= 0) &amp;&amp; (y &gt;= 0);</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

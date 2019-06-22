@@ -1,0 +1,29 @@
+Testsuite: hr.fer.zemris.java.tecaj.hw4.collections.SimpleHashtableTests
+Tests run: 26, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.176 sec
+
+Testcase: testIteratorExcep2 took 0.044 sec
+Testcase: testIteratorExcep3 took 0.001 sec
+Testcase: testGetExcep took 0 sec
+Testcase: testGet took 0 sec
+Testcase: testPut took 0.001 sec
+Testcase: testClear took 0 sec
+Testcase: testSize took 0 sec
+Testcase: testToString took 0 sec
+Testcase: testContainsKeyExcep took 0.001 sec
+Testcase: testContainsValueExcep took 0 sec
+Testcase: testRemoveExcep took 0 sec
+Testcase: testConstructorWithOneParameter took 0.001 sec
+Testcase: testContainsKey took 0 sec
+Testcase: testRemoveExcep2 took 0 sec
+Testcase: testContainsValue took 0 sec
+Testcase: testRearrange took 0 sec
+Testcase: testKeyValidation took 0 sec
+Testcase: testGetTableCapacity took 0 sec
+Testcase: testPutException took 0 sec
+Testcase: testIteratorExcep took 0.001 sec
+Testcase: testGetExcep2 took 0 sec
+Testcase: testIsEmpty took 0 sec
+Testcase: testRemove took 0 sec
+Testcase: testConstructorException took 0 sec
+Testcase: testIterator took 0 sec
+Testcase: testDefaultConstructor took 0.001 sec

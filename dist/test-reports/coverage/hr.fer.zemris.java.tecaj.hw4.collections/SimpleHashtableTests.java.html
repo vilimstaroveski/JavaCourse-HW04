@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimpleHashtableTests.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.collections</a> &gt; <span class="el_source">SimpleHashtableTests.java</span></div><h1>SimpleHashtableTests.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.collections;
+
+import hr.fer.zemris.java.tecaj.hw4.collections.SimpleHashtable;
+import hr.fer.zemris.java.tecaj.hw4.collections.SimpleHashtable.TableEntry;
+
+import java.security.InvalidParameterException;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.junit.Test;
+
+import static org.junit.Assert.*;
+
+/**
+ * Class that contains unit tests for {@code SimpleHashtable}
+ * @author Vilim Staroveški
+ *
+ */
+<span class="fc" id="L20">public class SimpleHashtableTests {</span>
+	
+	/**
+	 * Test for constructor without parameters. 
+	 */
+	@Test
+	public void testDefaultConstructor() {
+		
+<span class="fc" id="L28">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L30">		assertTrue(table.toString().equals(&quot;[]&quot;));</span>
+<span class="fc" id="L31">		assertTrue(table.isEmpty());</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">		assertTrue(table.size() == 0);</span>
+<span class="fc" id="L33">	}</span>
+	
+	/**
+	 * Test for constructor with one parameter: capacity. 
+	 */
+	@Test
+	public void testConstructorWithOneParameter() {
+		
+<span class="fc" id="L41">		SimpleHashtable table = new SimpleHashtable(6);</span>
+		
+<span class="fc" id="L43">		assertTrue(table.toString().equals(&quot;[]&quot;));</span>
+<span class="fc" id="L44">		assertTrue(table.isEmpty());</span>
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		assertTrue(table.size() == 0);</span>
+		
+<span class="fc" id="L47">		SimpleHashtable table2 = new SimpleHashtable(8);</span>
+		
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == table2.getTableCapacity());</span>
+<span class="fc" id="L50">	}</span>
+	
+	/**
+	 * Test for expected Exception to be thrown for invalid parameter in constructor.
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testConstructorException() {
+		
+<span class="nc" id="L58">		SimpleHashtable table = new SimpleHashtable(-6);</span>
+<span class="nc" id="L59">	}</span>
+	
+	/**
+	 * Test for getTableCapacity(): int.
+	 */
+	@Test
+	public void testGetTableCapacity() {
+		
+<span class="fc" id="L67">		SimpleHashtable table = new SimpleHashtable(6);</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == 8);</span>
+		
+<span class="fc" id="L70">		table.put(&quot;key&quot;, &quot;value&quot;);</span>
+		
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == 8);</span>
+<span class="fc" id="L73">	}</span>
+	
+	/**
+	 * Test for method put(Object value): void. 
+	 */
+	@Test
+	public void testPut() {
+		
+<span class="fc" id="L81">		SimpleHashtable table = new SimpleHashtable(2);</span>
+		
+<span class="fc" id="L83">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L84">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L85">		table.put(&quot;Test3&quot;, new Double(5.3));</span>
+		
+<span class="fc" id="L87">		assertTrue(table.containsValue(&quot;Test1Value&quot;));</span>
+<span class="fc" id="L88">		assertTrue(table.containsValue(new Float(2.2)));</span>
+<span class="fc" id="L89">		assertTrue(table.containsValue(new Double(5.3)));</span>
+<span class="fc" id="L90">		assertFalse(table.containsValue(&quot;Test4Value&quot;));</span>
+		
+<span class="fc" id="L92">		assertTrue(table.containsKey(&quot;Test1&quot;));</span>
+<span class="fc" id="L93">		assertTrue(table.containsKey(new Integer(4)));</span>
+<span class="fc" id="L94">		assertTrue(table.containsKey(&quot;Test3&quot;));</span>
+<span class="fc" id="L95">		assertFalse(table.containsKey(&quot;Test4&quot;));</span>
+		
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">		assertTrue(table.size() == 3);</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == 8);</span>
+		
+<span class="fc" id="L100">		table.put(&quot;Test3&quot;, &quot;NewValueForTest3&quot;);</span>
+		
+<span class="fc" id="L102">		assertTrue(table.containsValue(&quot;NewValueForTest3&quot;));</span>
+<span class="fc" id="L103">		assertTrue(table.containsKey(&quot;Test3&quot;));</span>
+<span class="fc" id="L104">		assertFalse(table.containsValue(new Double(5.3)));</span>
+		
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">		assertTrue(table.size() == 3);</span>
+<span class="fc" id="L107">	}</span>
+	
+	/**
+	 * Test for method put(Object value): void with expected exception for invalid arg. 
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testPutException() {
+		
+<span class="nc" id="L115">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L117">		table.put(null, &quot;Test1Value&quot;);</span>
+		
+<span class="nc" id="L119">	}</span>
+	
+	/**
+	 * Test for method containsKey(Object key): boolean. 
+	 */
+	@Test
+	public void testContainsKey() {
+		
+<span class="fc" id="L127">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L129">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L130">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L131">		table.put(&quot;Test3&quot;, new Double(5.3));</span>
+		
+<span class="fc" id="L133">		assertTrue(table.containsKey(&quot;Test1&quot;));</span>
+<span class="fc" id="L134">		assertTrue(table.containsKey(new Integer(4)));</span>
+<span class="fc" id="L135">		assertTrue(table.containsKey(&quot;Test3&quot;));</span>
+<span class="fc" id="L136">		assertFalse(table.containsKey(&quot;Test4&quot;));</span>
+<span class="fc" id="L137">	}</span>
+	
+	/**
+	 * Test for method containsKey(Object key): boolean with expected exception. 
+	 */
+	@Test(expected=InvalidParameterException.class)
+	public void testContainsKeyExcep() {
+		
+<span class="nc" id="L145">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L147">		boolean b = table.containsKey(null);</span>
+<span class="nc" id="L148">	}</span>
+	
+	/**
+	 * Test for method get(Object key): Object with expected exception NonExistingKeyException. 
+	 */
+	@Test(expected=NonExistingKeyException.class)
+	public void testGetExcep() {
+		
+<span class="nc" id="L156">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L158">		TableEntry t = (TableEntry) table.get(&quot;neki&quot;);</span>
+<span class="nc" id="L159">	}</span>
+	
+	/**
+	 * Test for method get(Object key): Object with expected exception InvalidParameterException. 
+	 */
+	@Test(expected=InvalidParameterException.class)
+	public void testGetExcep2() {
+		
+<span class="nc" id="L167">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L169">		TableEntry t = (TableEntry) table.get(null);</span>
+<span class="nc" id="L170">	}</span>
+	
+	/**
+	 * Test for method containsValue(Object value): boolean. 
+	 */
+	@Test
+	public void testContainsValue() {
+		
+<span class="fc" id="L178">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L180">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L181">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L182">		table.put(&quot;Test3&quot;, new Double(5.3));</span>
+		
+<span class="fc" id="L184">		assertTrue(table.containsValue(&quot;Test1Value&quot;));</span>
+<span class="fc" id="L185">		assertTrue(table.containsValue(new Float(2.2)));</span>
+<span class="fc" id="L186">		assertTrue(table.containsValue(new Double(5.3)));</span>
+<span class="fc" id="L187">		assertFalse(table.containsValue(&quot;Test4Value&quot;));</span>
+<span class="fc" id="L188">	}</span>
+	
+	/**
+	 * Test for method containsValue(Object value): boolean with expected exception InvalidParameterException. 
+	 */
+	@Test(expected=InvalidParameterException.class)
+	public void testContainsValueExcep() {
+		
+<span class="nc" id="L196">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L198">		boolean b = table.containsValue(null);</span>
+<span class="nc" id="L199">	}</span>
+	
+	/**
+	 * Test for method get(Object key): Object
+	 */
+	@Test
+	public void testGet() {
+		
+<span class="fc" id="L207">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L209">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L210">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L211">		table.put(&quot;Test3&quot;, new Double(5.3));</span>
+		
+<span class="fc" id="L213">		assertTrue(table.get(&quot;Test1&quot;).equals(&quot;Test1Value&quot;));</span>
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">		assertTrue(Math.abs((float)table.get(4) - 2.2) &lt; 0.0000001);</span>
+<span class="fc" id="L215">		assertTrue(table.get(&quot;Test3&quot;).equals(new Double(5.3)));</span>
+<span class="fc" id="L216">	}</span>
+	
+	/**
+	 * Test for method size(): int
+	 */
+	@Test
+	public void testSize() {
+		
+<span class="fc" id="L224">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L226">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L227">		table.put(new Integer(4), new Float(2.2));</span>
+		
+<span class="pc bpc" id="L229" title="1 of 2 branches missed.">		assertTrue(table.size() == 2);</span>
+		
+<span class="fc" id="L231">		assertTrue(table.containsKey(&quot;Test1&quot;));</span>
+<span class="fc" id="L232">		table.remove(&quot;Test1&quot;);</span>
+		
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">		assertTrue(table.size() == 1);</span>
+<span class="fc" id="L235">	}</span>
+	
+	/**
+	 * Test for method remove(Object key): void
+	 */
+	@Test
+	public void testRemove() {
+		
+<span class="fc" id="L243">		SimpleHashtable table = new SimpleHashtable(1);</span>
+		
+<span class="fc" id="L245">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L246">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L247">		table.put(&quot;Test2&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L248">		table.put(new Integer(5), new Float(2.2));</span>
+<span class="fc" id="L249">		table.put(&quot;Test3&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L250">		table.put(new Integer(6), new Float(2.2));</span>
+<span class="fc" id="L251">		table.put(&quot;Test4&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L252">		table.put(new Integer(7), new Float(2.2));</span>
+<span class="fc" id="L253">		table.put(&quot;Test5&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L254">		table.put(new Integer(8), new Float(2.2));</span>
+<span class="fc" id="L255">		table.put(&quot;Test6&quot;, &quot;Test1Value&quot;);</span>
+		
+<span class="fc" id="L257">		assertTrue(table.containsKey(&quot;Test1&quot;));</span>
+<span class="fc" id="L258">		table.remove(&quot;Test1&quot;);</span>
+<span class="fc" id="L259">		assertFalse(table.containsKey(&quot;Test1&quot;));</span>
+		
+<span class="fc" id="L261">		table.remove(&quot;Test2&quot;);</span>
+<span class="fc" id="L262">		table.remove(&quot;Test3&quot;);</span>
+<span class="fc" id="L263">		table.remove(&quot;Test4&quot;);</span>
+<span class="fc" id="L264">		table.remove(&quot;Test5&quot;);</span>
+<span class="fc" id="L265">		table.remove(&quot;Test6&quot;);</span>
+<span class="fc" id="L266">		table.remove(7);</span>
+<span class="fc" id="L267">		table.remove(8);</span>
+<span class="fc" id="L268">		table.remove(4);</span>
+<span class="fc" id="L269">		table.remove(5);</span>
+<span class="fc" id="L270">		table.remove(6);</span>
+		
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">		assertTrue(table.size() == 0);</span>
+		
+		
+<span class="fc" id="L275">	}</span>
+	
+	/**
+	 * Test for method remove(Object key): void with expected exception InvalidParameterException. 
+	 */
+	@Test(expected=InvalidParameterException.class)
+	public void testRemoveExcep() {
+		
+<span class="nc" id="L283">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L285">		table.remove(null);</span>
+<span class="nc" id="L286">	}</span>
+	
+	/**
+	 * Test for method remove(Object key): void with expected exception NonExistingKeyException. 
+	 */
+	@Test(expected=NonExistingKeyException.class)
+	public void testRemoveExcep2() {
+		
+<span class="nc" id="L294">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L296">		table.remove(&quot;neki&quot;);</span>
+<span class="nc" id="L297">	}</span>
+	
+	/**
+	 * Test for method isEmpty(): boolean
+	 */
+	@Test
+	public void testIsEmpty() {
+		
+<span class="fc" id="L305">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L307">		assertTrue(table.isEmpty());</span>
+<span class="fc" id="L308">		table.put(&quot;Test&quot;, &quot;Value&quot;);</span>
+<span class="fc" id="L309">		assertFalse(table.isEmpty());</span>
+<span class="fc" id="L310">		table.remove(&quot;Test&quot;);</span>
+<span class="fc" id="L311">		assertTrue(table.isEmpty());</span>
+<span class="fc" id="L312">	}</span>
+	
+	/**
+	 * Test for method toString(): String
+	 */
+	@Test
+	public void testToString() {
+		
+<span class="fc" id="L320">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L322">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L323">		table.put(new Integer(4), new Float(2.2));</span>
+		
+<span class="fc" id="L325">		String expectedString = new String(&quot;[4=2.2, Test1=Test1Value]&quot;);</span>
+
+<span class="fc" id="L327">		assertTrue(table.toString().equals(expectedString));</span>
+<span class="fc" id="L328">	}</span>
+
+	/**
+	 * Test for method clear(): void
+	 */
+	@Test
+	public void testClear() {
+	
+<span class="fc" id="L336">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L338">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L339">		table.put(new Integer(4), new Float(2.2));</span>
+		
+<span class="fc" id="L341">		table.clear();</span>
+		
+<span class="fc" id="L343">		assertTrue(table.isEmpty());</span>
+		
+<span class="fc" id="L345">		assertFalse(table.containsKey(&quot;Test1&quot;));</span>
+<span class="fc" id="L346">		assertFalse(table.containsKey(4));</span>
+<span class="fc" id="L347">	}</span>
+	
+	/**
+	 * Test for method rearrange(): void
+	 */
+	@Test
+	public void testRearrange() {
+		
+<span class="fc" id="L355">		SimpleHashtable table = new SimpleHashtable(2);</span>
+		
+<span class="fc" id="L357">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L358">		table.put(new Integer(4), new Float(2.2));</span>
+		
+<span class="pc bpc" id="L360" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == 4);</span>
+		
+<span class="fc" id="L362">		table.put(&quot;test2&quot;, &quot;value&quot;);</span>
+		
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">		assertTrue(table.getTableCapacity() == 8);</span>
+<span class="fc" id="L365">	}</span>
+	
+	
+	/**
+	 * Test for method keyValidation(Object key): void
+	 */
+	@Test(expected=NonExistingKeyException.class)
+	public void testKeyValidation() {
+		
+<span class="nc" id="L374">		SimpleHashtable table = new SimpleHashtable(2);</span>
+		
+<span class="nc" id="L376">		table.keyValidation(&quot;neki&quot;);</span>
+<span class="nc" id="L377">	}</span>
+	
+	/**
+	 * Test for iterator.
+	 */
+	@Test
+	public void testIterator() {
+		
+<span class="fc" id="L385">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L387">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L388">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L389">		table.put(&quot;test2&quot;, &quot;value&quot;);</span>
+		
+<span class="fc" id="L391">		Iterator&lt;SimpleHashtable.TableEntry&gt; iterator = table.iterator();</span>
+		
+<span class="fc" id="L393">		assertTrue(iterator.hasNext());</span>
+		
+<span class="fc bfc" id="L395" title="All 2 branches covered.">		while(iterator.hasNext()) {</span>
+<span class="fc" id="L396">			TableEntry obj = iterator.next();</span>
+<span class="pc bpc" id="L397" title="1 of 2 branches missed.">			assertTrue(obj != null);</span>
+			
+<span class="fc bfc" id="L399" title="All 2 branches covered.">			if(obj.getKey().equals(&quot;Test1&quot;)) {</span>
+				
+<span class="fc" id="L401">				iterator.remove();</span>
+			}
+<span class="fc" id="L403">		}</span>
+<span class="fc" id="L404">	}</span>
+	
+	/**
+	 * Test for iterator. With exception: ConcurrentModificationException
+	 */
+	@Test(expected=ConcurrentModificationException.class)
+	public void testIteratorExcep() {
+		
+<span class="nc" id="L412">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L414">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+		
+<span class="nc" id="L416">		Iterator&lt;SimpleHashtable.TableEntry&gt; iterator = table.iterator();</span>
+		
+<span class="nc" id="L418">		table.remove(&quot;Test1&quot;);</span>
+<span class="nc" id="L419">		assertTrue(iterator.hasNext());</span>
+<span class="nc" id="L420">	}</span>
+	
+	/**
+	 * Test for iterator. With exception: NoSuchElementException
+	 */
+	@Test(expected=NoSuchElementException.class)
+	public void testIteratorExcep2() {
+		
+<span class="nc" id="L428">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="nc" id="L430">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+		
+<span class="nc" id="L432">		Iterator&lt;SimpleHashtable.TableEntry&gt; iterator = table.iterator();</span>
+		
+<span class="nc" id="L434">		iterator.next();</span>
+<span class="nc" id="L435">		iterator.next();</span>
+<span class="nc" id="L436">	}</span>
+	
+	/**
+	 * Test for iterator. With exception: IllegalStateException
+	 */
+	@Test(expected=IllegalStateException.class)
+	public void testIteratorExcep3() {
+		
+<span class="fc" id="L444">		SimpleHashtable table = new SimpleHashtable();</span>
+		
+<span class="fc" id="L446">		table.put(&quot;Test1&quot;, &quot;Test1Value&quot;);</span>
+<span class="fc" id="L447">		table.put(new Integer(4), new Float(2.2));</span>
+<span class="fc" id="L448">		table.put(&quot;test2&quot;, &quot;value&quot;);</span>
+		
+<span class="fc" id="L450">		Iterator&lt;SimpleHashtable.TableEntry&gt; iterator = table.iterator();</span>
+		
+<span class="nc bnc" id="L452" title="All 2 branches missed.">		while(iterator.hasNext()) {</span>
+			
+<span class="nc" id="L454">			iterator.remove();</span>
+<span class="nc" id="L455">			iterator.remove();</span>
+		}
+<span class="nc" id="L457">	}</span>
+	
+	
+	
+	
+	
+	
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

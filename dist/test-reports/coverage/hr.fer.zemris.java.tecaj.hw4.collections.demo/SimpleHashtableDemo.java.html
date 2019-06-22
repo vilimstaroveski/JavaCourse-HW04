@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimpleHashtableDemo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.collections.demo</a> &gt; <span class="el_source">SimpleHashtableDemo.java</span></div><h1>SimpleHashtableDemo.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.collections.demo;
+
+import hr.fer.zemris.java.tecaj.hw4.collections.SimpleHashtable;
+
+/**
+ * Class used for SimpleHashtable demonstration. 
+ * @author Vilim Staroveški
+ *
+ */
+<span class="nc" id="L10">public class SimpleHashtableDemo {</span>
+
+	/**
+	 * Method called when program starts. 
+	 */
+	public static void main(String[] args) {
+
+		// create collection:
+<span class="nc" id="L18">		SimpleHashtable examMarks = new SimpleHashtable(2);</span>
+		// fill data:
+<span class="nc" id="L20">		examMarks.put(&quot;Ivana&quot;, Integer.valueOf(2));</span>
+<span class="nc" id="L21">		examMarks.put(&quot;Ante&quot;, Integer.valueOf(2));</span>
+<span class="nc" id="L22">		examMarks.put(&quot;Jasna&quot;, Integer.valueOf(2));</span>
+<span class="nc" id="L23">		examMarks.put(&quot;Kristina&quot;, Integer.valueOf(5));</span>
+<span class="nc" id="L24">		examMarks.put(&quot;Ivana&quot;, Integer.valueOf(5)); // overwrites old grade for Ivana</span>
+		// query collection:
+<span class="nc" id="L26">		Integer kristinaGrade = (Integer)examMarks.get(&quot;Kristina&quot;);</span>
+<span class="nc" id="L27">		System.out.println(&quot;Kristina's exam grade is: &quot; + kristinaGrade); // writes: 5</span>
+		// What is collection's size? Must be four!
+<span class="nc" id="L29">		System.out.println(&quot;Number of stored pairs: &quot; + examMarks.size()); // writes: 4</span>
+		
+<span class="nc" id="L31">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Kruznica.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.grafika</a> &gt; <span class="el_source">Kruznica.java</span></div><h1>Kruznica.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.grafika;
+
+/**
+ * Razred koji predstavlja kružnicu. Kružnica je određena koordinatama točke centra i radijusom.
+ * 
+ * @author Vilim Staroveški
+ *
+ */
+public class Kruznica extends Elipsa {
+
+	/**
+	 * Konstruktor koji prima 3 argumenta, koordinate točke centra i radijus. 
+	 * 
+	 * @param centarX - {@code int} vrijednost koja predstavlja x koordinatu centra kružnice.
+	 * @param centarY - {@code int} vrijednost koja predstavlja x koordinatu centra kružnice.
+	 * @param radijus - {@code int} vrijednost koja predstavlja radijus kružnice. Nesmije biti negativan!
+	 */
+	public Kruznica(int centarX, int centarY, int radijus) {
+		
+<span class="nc" id="L20">		super(centarX, centarY, radijus, radijus);</span>
+<span class="nc" id="L21">	}</span>
+
+	/**
+	 * {@link StvarateljLika} koji proizvodi kružnice.
+	 */
+<span class="nc" id="L26">	public static final StvarateljLika STVARATELJ = new KruznicaStvaratelj();</span>
+	
+	/**
+	 * Privatni statički razred koji služi kao tvornica za proizvodnju kružnice. Implementacija {@link StvarateljLika}.
+	 * 
+	 * @author Vilim Staroveški
+	 *
+	 */
+<span class="nc" id="L34">	private static class KruznicaStvaratelj implements StvarateljLika {</span>
+
+		@Override
+		public String nazivLika() {
+
+<span class="nc" id="L39">			return &quot;KRUG&quot;;</span>
+		}
+
+		@Override
+		public GeometrijskiLik stvoriIzStringa(String parametri) {
+			
+<span class="nc" id="L45">			int[] argumenti = null;</span>
+			
+			try {
+				
+<span class="nc" id="L49">				argumenti = Potrepštine.izdvojiArgumente(parametri, 3);</span>
+			
+<span class="nc" id="L51">			} catch(NumberFormatException e) {</span>
+				
+<span class="nc" id="L53">				throw new IllegalArgumentException();</span>
+<span class="nc" id="L54">			}</span>
+			
+<span class="nc" id="L56">			return new Kruznica(argumenti[0], argumenti[1], argumenti[2]);</span>
+		}
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

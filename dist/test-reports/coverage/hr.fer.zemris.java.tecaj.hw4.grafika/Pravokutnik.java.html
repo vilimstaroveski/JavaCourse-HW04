@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Pravokutnik.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.grafika</a> &gt; <span class="el_source">Pravokutnik.java</span></div><h1>Pravokutnik.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.grafika;
+
+import hr.fer.zemris.java.tecaj_3.prikaz.Slika;
+
+/**
+ * Razred koji predstavlja pravokutnik. Pravokutnik je geometrijski lik definiran sa koordinatama gornjeg lijevog vrha, sirinom i visinom.
+ * 
+ * @author Vilim Staroveški
+ *
+ */
+public class Pravokutnik extends GeometrijskiLik {
+
+	/**
+	 * X koordinata gornjeg lijevog vrha.
+	 */
+	private final int pocetakX;
+	
+	/**
+	 * Y koordinata gornjeg lijevog vrha.
+	 */
+	private final int pocetakY;
+	
+	/**
+	 * Visina pravokutnika.
+	 */
+	private final int visina;
+	
+	/**
+	 * Sirina pravokutnika.
+	 */
+	private final int sirina;
+	
+	/**
+	 * Konstruktor koji prima 4 parametra: koordinate gornjeg lijevog vrha, sirinu i visinu. Sirina i visina moraju biti pozitivni brojevi.
+	 * 
+	 * @param pocetakX - {@code int} vrijednost koja predstavlja x koordinatu gornjeg lijevog vrha.
+	 * @param pocetakY - {@code int} vrijednost koja predstavlja y koordinatu gornjeg lijevog vrha.
+	 * @param visina - {@code int} vrijednost koja predstavlja visinu pravokutnika. Mora biti pozitivan broj.
+	 * @param sirina - {@code int} vrijednost koja predstavlja sirinu pravokutnika. Mora biti pozitivan broj.
+	 * @throws IllegalArgumentException ako je sirina ili visina zadana kao negativan broj.
+	 */
+	public Pravokutnik(int pocetakX, int pocetakY, int visina, int sirina) {
+		
+<span class="nc" id="L44">		super();</span>
+		
+<span class="nc bnc" id="L46" title="All 4 branches missed.">		if (sirina &lt; 0 || visina &lt; 0) {</span>
+			
+<span class="nc" id="L48">			throw new IllegalArgumentException(&quot;Stranice pravokutnika moraju biti pozitivni brojevi!&quot;);</span>
+		}
+		
+<span class="nc" id="L51">		this.pocetakX = pocetakX;</span>
+<span class="nc" id="L52">		this.pocetakY = pocetakY;</span>
+<span class="nc" id="L53">		this.visina = visina;</span>
+<span class="nc" id="L54">		this.sirina = sirina;</span>
+<span class="nc" id="L55">	}</span>
+
+	@Override
+	public boolean sadrziTocku(int x, int y) {
+		
+<span class="nc bnc" id="L60" title="All 4 branches missed.">		boolean pozicijaX = (x &gt;= pocetakX) &amp;&amp; (x &lt;= pocetakX+sirina);</span>
+<span class="nc bnc" id="L61" title="All 4 branches missed.">		boolean pozicijaY = (y &gt;= pocetakY) &amp;&amp; (y &lt;= pocetakY+visina);</span>
+		
+<span class="nc bnc" id="L63" title="All 4 branches missed.">		if (pozicijaX &amp;&amp; pozicijaY) {</span>
+			
+<span class="nc" id="L65">			return true;</span>
+		}
+		
+<span class="nc" id="L68">		return false;</span>
+	}
+
+	@Override
+	public void popuniLik(Slika slika) {
+
+<span class="nc" id="L74">		int krajnjiX = pocetakX + sirina;</span>
+<span class="nc" id="L75">		int krajnjiY = pocetakY + visina;</span>
+		
+<span class="nc bnc" id="L77" title="All 2 branches missed.">		for(int i = pocetakX; i &lt;= krajnjiX; i++) {</span>
+			
+<span class="nc bnc" id="L79" title="All 2 branches missed.">			for(int j = pocetakY; j &lt;= krajnjiY; j++) {</span>
+				
+<span class="nc bnc" id="L81" title="All 4 branches missed.">				if(sadrziTocku(i, j) &amp;&amp; Potrepštine.tockaJeNaSlici(slika, i, j)) {</span>
+					
+<span class="nc" id="L83">						slika.upaliTocku(i, j);</span>
+				}
+			}
+		}
+<span class="nc" id="L87">	}</span>
+	
+	/**
+	 * {@link StvarateljLika} koji proizvodi pravokutnik.
+	 */
+<span class="nc" id="L92">	public static final StvarateljLika STVARATELJ = new PravokutnikStvaratelj();</span>
+	
+	/**
+	 * Privatni statički razred koji služi kao tvornica za proizvodnju pravokutnika. Implementacija {@link StvarateljLika}.
+	 * 
+	 * @author Vilim Staroveški
+	 *
+	 */
+<span class="nc" id="L100">	private static class PravokutnikStvaratelj implements StvarateljLika {</span>
+
+		@Override
+		public String nazivLika() {
+
+<span class="nc" id="L105">			return &quot;PRAVOKUTNIK&quot;;</span>
+		}
+
+		@Override
+		public GeometrijskiLik stvoriIzStringa(String parametri) {
+			
+<span class="nc" id="L111">			int[] argumenti = null;</span>
+			
+			try {
+				
+<span class="nc" id="L115">				argumenti = Potrepštine.izdvojiArgumente(parametri, 4);</span>
+			
+<span class="nc" id="L117">			} catch(NumberFormatException e) {</span>
+				
+<span class="nc" id="L119">				throw new IllegalArgumentException();</span>
+<span class="nc" id="L120">			}</span>
+			
+<span class="nc" id="L122">			return new Pravokutnik(argumenti[0], argumenti[1], argumenti[2], argumenti[3]);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>

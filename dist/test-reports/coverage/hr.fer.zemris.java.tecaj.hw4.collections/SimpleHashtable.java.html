@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimpleHashtable.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Grafika</a> &gt; <a href="index.source.html" class="el_package">hr.fer.zemris.java.tecaj.hw4.collections</a> &gt; <span class="el_source">SimpleHashtable.java</span></div><h1>SimpleHashtable.java</h1><pre class="source lang-java linenums">package hr.fer.zemris.java.tecaj.hw4.collections;
+
+import java.security.InvalidParameterException;
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+
+/**
+ * Class with 2 private variables, size as {@code int} and table as
+ * {@link TableEntry} representing hash table. Size represents how many entries
+ * are there in this table.
+ * 
+ * @author Vilim Staroveski
+ *
+ */
+public class SimpleHashtable implements Iterable&lt;SimpleHashtable.TableEntry&gt;{
+
+	/**
+	 * Private variable that tells how many entries are there in this table.
+	 */
+	private int size;
+
+	/**
+	 * Array of table slots required for hash table principle.
+	 */
+	private TableEntry[] table;
+	
+	/**
+	 * Number of slots in this table.
+	 */
+	private int tableCapacity;
+	
+	/**
+	 * Number of modifications that happened.
+	 */
+	private int modificationCount;
+	
+	/**
+	 * Default constructor with no parameters, sets capacity of the table to 16
+	 * entries.
+	 */
+<span class="fc" id="L43">	public SimpleHashtable() {</span>
+
+<span class="fc" id="L45">		this.tableCapacity = 16;</span>
+<span class="fc" id="L46">		this.size = 0;</span>
+<span class="fc" id="L47">		this.table = new TableEntry[16];</span>
+<span class="fc" id="L48">		this.modificationCount = 0;</span>
+<span class="fc" id="L49">	}</span>
+
+	/**
+	 * Constructor with one parameter which is wanted minimum capacity of hash
+	 * table.
+	 * 
+	 * @param minCapacity
+	 *            - capacity {@code int}, must be a positive value.
+	 * @throws IllegalArgumentException
+	 *             if the given argument is a nonpositive number.
+	 */
+<span class="fc" id="L60">	public SimpleHashtable(int minCapacity) {</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">		if (minCapacity &lt; 1) {</span>
+
+<span class="fc" id="L64">			throw new IllegalArgumentException(&quot;Parameter must be positive nuber of type int&quot;);</span>
+		}
+
+<span class="fc" id="L67">		double exponent = Math.log10(minCapacity) / Math.log10(2);</span>
+<span class="fc" id="L68">		long roundedExponent = Math.round(exponent);</span>
+<span class="fc" id="L69">		int capacity = 0;</span>
+
+<span class="pc bpc" id="L71" title="1 of 2 branches missed.">		if (Math.pow(2, roundedExponent) &lt; minCapacity) {</span>
+
+<span class="nc" id="L73">			capacity = (int) Math.pow(2, roundedExponent + 1);</span>
+		} else {
+
+<span class="fc" id="L76">			capacity = (int) Math.pow(2, roundedExponent);</span>
+		}
+		
+<span class="fc" id="L79">		this.tableCapacity = capacity;</span>
+<span class="fc" id="L80">		this.table = new TableEntry[capacity];</span>
+<span class="fc" id="L81">		this.size = 0;</span>
+<span class="fc" id="L82">		this.modificationCount = 0;</span>
+<span class="fc" id="L83">	}</span>
+	
+	/**
+	 * Simple get method for collections capacity.
+	 * 
+	 * @return capacity of the collection.
+	 */
+	public int getTableCapacity() {
+		
+<span class="fc" id="L92">		return tableCapacity;</span>
+	}
+	
+
+	/**
+	 * Method that puts new element in table.
+	 * 
+	 * @param key
+	 *            - unique ID of the entry, must be non-null value
+	 * @param value
+	 *            - value of the entry
+	 * @throws IllegalArgumentException
+	 *             if the parameter key is given as a null value.
+	 */
+	public void put(Object key, Object value) {
+
+<span class="fc bfc" id="L108" title="All 2 branches covered.">		if (key == null) {</span>
+
+<span class="fc" id="L110">			throw new IllegalArgumentException(&quot;Null value as key of the entry is not allowed!&quot;);</span>
+		}
+
+<span class="fc" id="L113">		TableEntry newEntry = null;</span>
+		try {
+
+<span class="fc" id="L116">			newEntry = new TableEntry(key, value, null);</span>
+<span class="nc" id="L117">		} catch (InvalidParameterException e) {</span>
+
+<span class="nc" id="L119">			System.err.println(e.getMessage());</span>
+<span class="fc" id="L120">		}</span>
+
+<span class="fc" id="L122">		int slot = Math.abs(key.hashCode()) % this.tableCapacity;</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">		if (this.containsKey(key)) {</span>
+
+			// update value-a u tablici
+<span class="fc" id="L127">			TableEntry oldEntry = this.table[slot];</span>
+
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">			while (!oldEntry.getKey().equals(key)) {</span>
+
+<span class="nc" id="L131">				oldEntry = oldEntry.next;</span>
+			}
+
+<span class="fc" id="L134">			oldEntry.setValue(value);</span>
+<span class="fc" id="L135">		}</span>
+
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		else if (this.table[slot] == null) {</span>
+
+			// ako u slotu nema još nikakvih entry-a
+<span class="fc" id="L140">			this.table[slot] = newEntry;</span>
+<span class="fc" id="L141">			this.size++;</span>
+<span class="fc" id="L142">			this.modificationCount++;</span>
+		}
+
+		else {
+
+<span class="fc" id="L147">			TableEntry temp = this.table[slot];</span>
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">			while (temp.next != null) {</span>
+
+<span class="nc" id="L150">				temp = temp.next;</span>
+			}
+<span class="fc" id="L152">			temp.next = newEntry;</span>
+<span class="fc" id="L153">			this.size++;</span>
+<span class="fc" id="L154">			this.modificationCount++;</span>
+		}
+		
+<span class="fc bfc" id="L157" title="All 2 branches covered.">		if (this.size &gt;= 0.75*this.tableCapacity) {</span>
+			
+<span class="fc" id="L159">			rearrangeTable();</span>
+		}
+<span class="fc" id="L161">	}</span>
+
+	/**
+	 * Method that doubles the capacity of this {@code SimpleHashtable} and rearranges the entries trough the slots.
+	 */
+	private void rearrangeTable() {
+		
+<span class="fc" id="L168">		TableEntry[] newTable = new TableEntry[this.tableCapacity*2];</span>
+<span class="fc" id="L169">		int newCapacity = 2*this.tableCapacity;</span>
+<span class="fc" id="L170">		TableEntry[] oldTable = this.table;</span>
+<span class="fc" id="L171">		int oldCapacity = this.tableCapacity;</span>
+		
+<span class="fc" id="L173">		this.table = newTable;</span>
+<span class="fc" id="L174">		this.tableCapacity = newCapacity;</span>
+<span class="fc" id="L175">		this.size = 0;</span>
+		
+<span class="fc bfc" id="L177" title="All 2 branches covered.">		for (int i = 0; i &lt; oldCapacity; i++) {</span>
+
+<span class="fc" id="L179">			TableEntry temp = oldTable[i];</span>
+
+<span class="fc bfc" id="L181" title="All 2 branches covered.">			while (temp != null) {</span>
+				
+<span class="fc" id="L183">				put(temp.getKey(), temp.getValue());</span>
+<span class="fc" id="L184">				temp = temp.next;</span>
+			}
+		}
+<span class="fc" id="L187">		modificationCount++;</span>
+<span class="fc" id="L188">	}</span>
+	
+	/**
+	 * Removes all entries from the collection.
+	 */
+	public void clear() {
+		
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		for(int i = 0; i &lt; this.tableCapacity; i++) {</span>
+			
+<span class="fc" id="L197">			this.table[i] = null;</span>
+		}
+		
+<span class="fc" id="L200">		this.size = 0;</span>
+<span class="fc" id="L201">		this.modificationCount++;</span>
+<span class="fc" id="L202">	}</span>
+
+	/**
+	 * Method that checks is there an entry with given ID in this table.
+	 * 
+	 * @param key
+	 *            - ID of searched entry.
+	 * @return {@code boolean} true if there is an entry with wanted ID. False
+	 *         otherwise.
+	 * @throws InvalidParameterException
+	 *             if the given argument key is not of type {@code Object}
+	 */
+	public boolean containsKey(Object key) {
+
+<span class="fc" id="L216">		argumentValidation(key);</span>
+
+<span class="fc" id="L218">		int possibleSlot = Math.abs(key.hashCode()) % this.tableCapacity;</span>
+
+<span class="fc" id="L220">		TableEntry temp = (TableEntry) this.table[possibleSlot];</span>
+
+<span class="fc bfc" id="L222" title="All 2 branches covered.">		if (temp == null) {</span>
+
+<span class="fc" id="L224">			return false;</span>
+		}
+
+		while (true) {
+
+<span class="fc bfc" id="L229" title="All 2 branches covered.">			if (temp == null) {</span>
+<span class="fc" id="L230">				return false;</span>
+			}
+<span class="fc bfc" id="L232" title="All 2 branches covered.">			if (temp.getKey().equals(key)) {</span>
+<span class="fc" id="L233">				return true;</span>
+			}
+<span class="fc" id="L235">			temp = temp.next;</span>
+		}
+	}
+
+	/**
+	 * Method that takes wanted entry out of the table.
+	 * 
+	 * @param key
+	 *            - unique ID of the wanted entry
+	 * @return - value of the entry in type {@code Object} if it is present.
+	 * @throws InvalidParameterException
+	 *             if the given argument key is not of type {@code Object}.
+	 * @throws NonExistingKeyException
+	 *             if the entry with the ID matching the key is not present in
+	 *             the table.
+	 */
+	public Object get(Object key) {
+
+<span class="fc" id="L253">		argumentValidation(key);</span>
+
+<span class="fc" id="L255">		keyValidation(key);</span>
+
+<span class="fc" id="L257">		int slot = Math.abs(key.hashCode()) % this.tableCapacity;</span>
+<span class="fc" id="L258">		TableEntry temp = this.table[slot];</span>
+
+		while (true) {
+
+<span class="pc bpc" id="L262" title="1 of 2 branches missed.">			if (temp == null) {</span>
+
+<span class="nc" id="L264">				return null;</span>
+			}
+
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">			if (temp.getKey().equals(key)) {</span>
+
+<span class="fc" id="L269">				return temp.getValue();</span>
+			}
+
+<span class="nc" id="L272">			temp = temp.next;</span>
+		}
+	}
+
+	/**
+	 * Method that gives information of how many elements there is in table.
+	 * 
+	 * @return - size {@code int} of the table.
+	 */
+	public int size() {
+
+<span class="fc" id="L283">		return this.size;</span>
+	}
+
+	/**
+	 * Method that checks is there an entry with value given as parameter.
+	 * 
+	 * @param value
+	 *            - value of type {@code Object}
+	 * @return {@code boolean} true if there is an entry with value given as
+	 *         parameter. False otherwise.
+	 * @throws InvalidParameterException
+	 *             if the given argument value is not of type {@code Object}
+	 */
+	public boolean containsValue(Object value) {
+
+<span class="fc" id="L298">		argumentValidation(value);</span>
+
+<span class="fc bfc" id="L300" title="All 2 branches covered.">		for (int i = 0; i &lt; this.tableCapacity; i++) {</span>
+
+<span class="fc" id="L302">			TableEntry pomocna = this.table[i];</span>
+
+<span class="fc bfc" id="L304" title="All 2 branches covered.">			while (pomocna != null) {</span>
+
+<span class="fc bfc" id="L306" title="All 2 branches covered.">				if (pomocna.getValue().equals(value)) {</span>
+
+<span class="fc" id="L308">					return true;</span>
+				}
+
+<span class="fc" id="L311">				pomocna = pomocna.next;</span>
+			}
+		}
+<span class="fc" id="L314">		return false;</span>
+	}
+
+	/**
+	 * Removes wanted element from table if it is present in it.
+	 * 
+	 * @param key
+	 *            - ID of the entry we want to remove
+	 * @throws InvalidParameterException
+	 *             if the given argument key is not of type {@code Object}.
+	 * @throws NonExistingKeyException
+	 *             if the entry with the ID matching the key is not present in
+	 *             the table.
+	 */
+	public void remove(Object key) {
+
+<span class="fc" id="L330">		argumentValidation(key);</span>
+
+<span class="fc" id="L332">		keyValidation(key);</span>
+
+<span class="fc" id="L334">		int slot = Math.abs(key.hashCode()) % this.tableCapacity;</span>
+<span class="fc" id="L335">		TableEntry temp = this.table[slot];</span>
+
+<span class="fc bfc" id="L337" title="All 2 branches covered.">		if (temp.getKey().equals(key)) {</span>
+
+<span class="fc" id="L339">			this.table[slot] = temp.next;</span>
+<span class="fc" id="L340">			size--;</span>
+<span class="fc" id="L341">			this.modificationCount++;</span>
+<span class="fc" id="L342">			return;</span>
+		}
+
+		while (true) {
+
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">			if (temp.next == null) {</span>
+
+<span class="nc" id="L349">				return;</span>
+			}
+
+<span class="pc bpc" id="L352" title="1 of 2 branches missed.">			if (temp.next.getKey().equals(key)) {</span>
+				
+<span class="fc" id="L354">				temp = temp.next.next;</span>
+<span class="fc" id="L355">				size--;</span>
+<span class="fc" id="L356">				this.modificationCount++;</span>
+<span class="fc" id="L357">				break;</span>
+			}
+<span class="nc" id="L359">			temp = temp.next;</span>
+		}
+<span class="fc" id="L361">	}</span>
+
+	/**
+	 * Method that checks if the given argument is compatible for this
+	 * {@code SimpleHashtable}.
+	 * 
+	 * @param argument
+	 *            - value we are checking for validation.
+	 * @throws InvalidParameterException
+	 *             if the argument fail the validation
+	 */
+	public void argumentValidation(Object argument) {
+
+<span class="fc bfc" id="L374" title="All 2 branches covered.">		if (!(argument instanceof Object)) {</span>
+
+<span class="fc" id="L376">			throw new InvalidParameterException(&quot;Parameters must be of type Object&quot;);</span>
+		}
+<span class="fc" id="L378">	}</span>
+
+	/**
+	 * Method that checks if the given key is present for this
+	 * {@code SimpleHashtable}.
+	 * 
+	 * @param argument
+	 *            - value we are checking for validation.
+	 * @throws NonExistingKeyException
+	 *             if the key is not present in this collection.
+	 */
+	public void keyValidation(Object key) {
+
+<span class="fc bfc" id="L391" title="All 2 branches covered.">		if (!(this.containsKey(key))) {</span>
+
+<span class="fc" id="L393">			throw new NonExistingKeyException(&quot;This hash table doesn't have wanted object: &quot; + key);</span>
+		}
+<span class="fc" id="L395">	}</span>
+
+	/**
+	 * Method that checks if this table has no entrys in it.
+	 * 
+	 * @return {@code boolean} true if the table is empty. False otherwise.
+	 */
+	public boolean isEmpty() {
+
+<span class="fc bfc" id="L404" title="All 2 branches covered.">		return this.size == 0;</span>
+	}
+
+	/**
+	 * Returns {@code String} representation of this collection.
+	 * 
+	 */
+	public String toString() {
+
+<span class="fc" id="L413">		String tableAsString = &quot;[&quot;;</span>
+		
+<span class="fc bfc" id="L415" title="All 2 branches covered.">		for (int i = 0; i &lt; this.tableCapacity; i++) {</span>
+
+<span class="fc" id="L417">			TableEntry temp = this.table[i];</span>
+
+<span class="fc bfc" id="L419" title="All 2 branches covered.">			while (temp != null) {</span>
+				
+<span class="fc" id="L421">				tableAsString += temp.toString()+&quot;, &quot;;</span>
+<span class="fc" id="L422">				temp = temp.next;</span>
+			}
+		}
+		
+		//uklanjanje nepotrebnog zadnjeg zareza ako je postavljen
+<span class="fc bfc" id="L427" title="All 2 branches covered.">		if (this.size &gt; 0) {</span>
+			
+<span class="fc" id="L429">			tableAsString = tableAsString.substring(0, tableAsString.length()-2);</span>
+		}
+		
+<span class="fc" id="L432">		tableAsString += &quot;]&quot;;</span>
+<span class="fc" id="L433">		return tableAsString;</span>
+	}
+
+	/**
+	 * Class that represents an entry in the {@code SimpleHashtable}. It has
+	 * private {@code Object} key as unique ID, private {@code Object} value
+	 * that is stored under given key and reference to the next entry in the
+	 * table.
+	 * 
+	 * @author Vilim Staroveški
+	 *
+	 */
+	public static class TableEntry {
+
+		/**
+		 * Represents unique ID for a value paired with it.
+		 */
+		private Object key;
+
+		/**
+		 * Value we want to put in to the table.
+		 */
+		private Object value;
+
+		/**
+		 * Reference to the next entry.
+		 */
+		public TableEntry next;
+
+		/**
+		 * Constructor with 2 parameters of type {@code Object}.
+		 * 
+		 * @param key
+		 *            unique ID of this entry.
+		 * @param value
+		 *            value we want to put in to the table.
+		 * @throws InvalidParameterException
+		 *             if both of the arguments are not {@code Object} values.
+		 */
+<span class="fc" id="L472">		public TableEntry(Object key, Object value, TableEntry next) {</span>
+
+<span class="fc" id="L474">			argumentValidation(value);</span>
+<span class="fc" id="L475">			argumentValidation(key);</span>
+
+<span class="fc" id="L477">			this.value = value;</span>
+<span class="fc" id="L478">			this.key = key;</span>
+<span class="fc" id="L479">			this.next = next;</span>
+<span class="fc" id="L480">		}</span>
+
+		/**
+		 * Simple get method
+		 * 
+		 * @return ID of this entry.
+		 */
+		public Object getKey() {
+			
+<span class="fc" id="L489">			return key;</span>
+		}
+
+		/**
+		 * Simple get method
+		 * 
+		 * @return value of this entry.
+		 */
+		public Object getValue() {
+			
+<span class="fc" id="L499">			return value;</span>
+		}
+
+		/**
+		 * Simple set method.
+		 * 
+		 * @param value
+		 *            - wanted value of this entry.
+		 * @throws InvalidParameterException
+		 *             if
+		 */
+		public void setValue(Object value) {
+
+<span class="fc" id="L512">			argumentValidation(value);</span>
+<span class="fc" id="L513">			this.value = value;</span>
+<span class="fc" id="L514">		}</span>
+
+		/**
+		 * This method validates arguments for this entry. Arguments must be of
+		 * type {@code Object}
+		 * 
+		 * @param argument
+		 *            - argument that is being validated.
+		 * @throws InvalidParameterException
+		 *             if argument is invalid.
+		 */
+		public void argumentValidation(Object argument) {
+
+<span class="fc bfc" id="L527" title="All 2 branches covered.">			if (!(argument instanceof Object)) {</span>
+
+<span class="fc" id="L529">				throw new InvalidParameterException(</span>
+						&quot;Parameter must be of type Object!&quot;);
+			}
+<span class="fc" id="L532">		}</span>
+
+		/**
+		 * Returns {@code String} representation of this entry in format:
+		 * &quot;key=value&quot;
+		 */
+		@Override
+		public String toString() {
+			
+<span class="fc" id="L541">			return key + &quot;=&quot; + value;</span>
+		}
+	}
+
+	/**
+	 * Returns iterator that can iterate trough this collection.
+	 * @return IteratorForSimpleHashtable which is iterator.
+	 */
+	@Override
+	public Iterator&lt;SimpleHashtable.TableEntry&gt; iterator() {
+
+<span class="fc" id="L552">		return new IteratorImpl();</span>
+	}
+	
+	/**
+	 * Implementation of iterator for {@code SimpleHashtable}. It iterates from slot 0 to last slot in the table.
+	 * 
+	 * @author Vilim Staroveški
+	 *
+	 */
+	private class IteratorImpl implements Iterator&lt;SimpleHashtable.TableEntry&gt; {
+		
+		/**
+		 * Reference to the entry which will be returned next with the call of method next().
+		 */
+		private TableEntry currentEntry;
+		
+		/**
+		 * Reference to the entry that was last returned when the method next() was called.
+		 */
+		private TableEntry previusEntry;
+		
+		/**
+		 * Private int value that has information of how many entries are there in the collection.
+		 */
+		private int howManyLeft;
+		
+		/**
+		 * Int value representing the slot in which the iterator iterates currently.
+		 */
+		private int currentSlot;
+		
+		/**
+		 * Number of modifications that happened during the iteration.
+		 */
+		private int iteratorModificationCount;
+		
+		/**
+		 * Constructor for iterator implementation without parameters. Initial state is currentEntry on the first element in the slot number 0,
+		 * currentSlot is set on 0, howManyLeft is set to the size of the collection, iteratorModificationCount is set to the number of happened modifications in this
+		 * collection until the iteration and the previusEntry is set to null. 
+		 */
+<span class="fc" id="L593">		public IteratorImpl() {</span>
+			
+<span class="fc" id="L595">			currentEntry = table[0];</span>
+<span class="fc" id="L596">			howManyLeft = size;</span>
+<span class="fc" id="L597">			currentSlot = 0;</span>
+<span class="fc" id="L598">			iteratorModificationCount = SimpleHashtable.this.modificationCount;</span>
+<span class="fc" id="L599">			previusEntry = null;</span>
+<span class="fc" id="L600">		}</span>
+		
+		/**
+		 * Returns true if there are some entries in the collection left to iterate trough.
+		 *  
+		 * @return true if the collection is not iterated to the end. False otherwise.
+		 * @throws ConcurrentModificationException if the collection had been modified from outside this iterator.
+		 */
+		@Override
+		public boolean hasNext() {
+			
+<span class="fc bfc" id="L611" title="All 2 branches covered.">			if (iteratorModificationCount != SimpleHashtable.this.modificationCount) {</span>
+				
+<span class="fc" id="L613">				throw new ConcurrentModificationException();</span>
+			}
+			
+<span class="fc bfc" id="L616" title="All 2 branches covered.">			return howManyLeft &gt; 0;</span>
+		}
+		
+		/**
+		 * Method that returns next entry from the collection.
+		 * @return {@code TableEntry} representing the next entry from the collection.
+		 * @throws NoSuchElementException if there is no more entries in this collection.
+		 */
+		@Override
+		public TableEntry next() {
+			
+<span class="fc bfc" id="L627" title="All 2 branches covered.">			if (howManyLeft &lt;= 0) {</span>
+				
+<span class="fc" id="L629">				throw new NoSuchElementException();</span>
+			}
+			
+<span class="pc bpc" id="L632" title="1 of 2 branches missed.">			while (hasNext()) {</span>
+				
+<span class="fc bfc" id="L634" title="All 2 branches covered.">				if (currentEntry != null) {</span>
+					
+<span class="fc" id="L636">					previusEntry = currentEntry;</span>
+<span class="fc" id="L637">					currentEntry = currentEntry.next;</span>
+<span class="fc" id="L638">					howManyLeft--;</span>
+<span class="fc" id="L639">					return previusEntry;</span>
+					
+					
+				}
+				else {
+					
+<span class="fc" id="L645">					currentSlot++;</span>
+<span class="fc" id="L646">					currentEntry = table[currentSlot];</span>
+				}
+			}
+<span class="nc" id="L649">			return null;</span>
+		}
+		
+		/**
+		 * Method that removes entry that was last returned by the method next().
+		 * @throws IllegalStateException if this method was called more than once in current state of the iterator.
+		 */
+		public void remove() {
+			
+<span class="fc" id="L658">			iteratorModificationCount++;</span>
+			
+<span class="fc bfc" id="L660" title="All 2 branches covered.">			if (previusEntry == null) {</span>
+				
+<span class="fc" id="L662">				throw new IllegalStateException();</span>
+			}
+			
+			try {
+				
+<span class="fc" id="L667">				SimpleHashtable.this.remove(previusEntry.getKey());</span>
+				
+<span class="nc" id="L669">			} catch (NonExistingKeyException e) {</span>
+				
+<span class="nc" id="L671">				iteratorModificationCount--;</span>
+<span class="fc" id="L672">			}</span>
+			
+<span class="fc" id="L674">			previusEntry = null;</span>
+<span class="fc" id="L675">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.4.201502262128</span></div></body></html>
